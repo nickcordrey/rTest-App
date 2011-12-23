@@ -1,4 +1,6 @@
 RmapApp::Application.routes.draw do
+  get "pages/dragtest"
+
   get "pages/raphael"
 
   # The priority is based upon order of creation:
