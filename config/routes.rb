@@ -1,4 +1,6 @@
 RmapApp::Application.routes.draw do
+  get "pages/d3"
+
   get "pages/dragtest"
 
   get "pages/raphael"
