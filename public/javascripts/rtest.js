@@ -1,7 +1,7 @@
 var data =
-	{"contact0":{"name": "Barack Obama", "level":0, "BI": 5, "children":[{"id":"contact1"},{"id":"contact2"}]},
-	"contact1":{"name": "Hilary Clinton", "level":1, "BI": 1, "children":[{"id":"contact3"}, {"id":"contact4"}, {"id":"contact5"}]},
-	"contact2":{"name": "John McCaine", "level":2, "BI": 3, "children":[{"id":"contact16"}]},
+	{"contact0":{"name": "Barack Obama", "level":0, "BI": 5, "children":["contact1","contact2"]},
+	"contact1":{"name": "Hilary Clinton", "level":1, "BI": 1, "children":["contact3","contact4", "contact5"]},
+	"contact2":{"name": "John McCaine", "level":2, "BI": 3, "children":["contact6"]},
 	"contact3":{"name": "Nick Cordrey", "level":2, "BI": 3, "children":[]},
 	"contact4":{"name": "Natalie Brooking", "level":2, "BI": 3, "children":[]},
 	"contact5":{"name": "Paul Brooking", "level":2, "BI": 3, "children":[]},
@@ -16,14 +16,14 @@ var counter = new Array();
 
 
 function get_coords(node) {
-	alert(JSON.stringify(data[node].children.length));
+	//alert(JSON.stringify(data[node].children.length));
 	// If this node is not a leaf
 	if(data[node].children.length !== 0) {
 		alert(node + ' is a branch');
 		// Then for each child
 		$.each(data[node].children, function(key, value) {
-			alert(JSON.stringify(value.id) + ' may be a leaf');
-	//		get_coords(value);
+			//alert(JSON.stringify(value) + ' may be a leaf');
+			get_coords(value);
 		});		
   	}
 	else {
