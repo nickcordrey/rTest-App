@@ -15,15 +15,17 @@ var counter = new Array();
 //counter[0] = {"id":"contact0", "count":0};
 
 
-function get_coords(node) {
+function get_node_positions(node) {
 	//alert(JSON.stringify(data[node].children.length));
 	// If this node is not a leaf
+	//alert('something');
 	if(data[node].children.length !== 0) {
 		alert(node + ' is a branch');
 		// Then for each child
+	
 		$.each(data[node].children, function(key, value) {
 			//alert(JSON.stringify(value) + ' may be a leaf');
-			get_coords(value);
+			get_node_positions(value);
 		});		
   	}
 	else {
@@ -100,8 +102,10 @@ function traverse(parent) {
 }*/
 
 $(document).ready( function () {
+	
+	//var node_positions = new Array();
     
-	get_coords("contact0");
+	get_node_positions("contact0");
 	//alert(get_child_count("contact0"));
 	//get_child_counts();
 	//alert(get_descendant_count("contact0"));	
