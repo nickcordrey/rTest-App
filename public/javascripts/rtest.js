@@ -1,7 +1,7 @@
 var data =
 	{"contact0":{"name": "Barack Obama", "level":0, "BI": 5, "children":["contact1","contact2"]},
 	"contact1":{"name": "Hilary Clinton", "level":1, "BI": 1, "children":["contact3","contact4", "contact5"]},
-	"contact2":{"name": "John McCaine", "level":2, "BI": 3, "children":["contact6"]},
+	"contact2":{"name": "John McCaine", "level":1, "BI": 3, "children":["contact6"]},
 	"contact3":{"name": "Nick Cordrey", "level":2, "BI": 3, "children":[]},
 	"contact4":{"name": "Natalie Brooking", "level":2, "BI": 3, "children":[]},
 	"contact5":{"name": "Paul Brooking", "level":2, "BI": 3, "children":[]},
@@ -18,23 +18,19 @@ var node_x = 0;
 function get_node_positions(node) {
 	
 	if(data[node].children.length !== 0) {
-		alert(node + ' is a branch');
-		// Then for each child
 	
 		$.each(data[node].children, function(key, value) {
 			get_node_positions(value);
 		});
-		
-		x_left = node_positions[data[node].children[0]];
-		x_right = node_positions[data[node].children[data[node].children.length]];
-		
-		//node_positions[node] = {"x":}	
+	
+		x_left = node_positions[data[node].children[0]].x;
+		x_right = node_positions[data[node].children[data[node].children.length - 1]].x;
+		x_node = x_left + (x_right - x_left)/2;
+		node_positions[node] = {"x":x_node, "y":data[node].level};
   	}
 	else {
-		alert(node + ' is a leaf');
 		node_x++;
 		node_positions[node] = {"x":node_x, "y":data[node].level};
-		//node_positions.push({node:{"x":node_x, "y":data[node].level}});
  	}
 }
 
@@ -97,13 +93,14 @@ function traverse(parent) {
 }*/
 
 $(document).ready( function () {
-	
-	//var node_positions = new Array();
 
-
-    
+    var R = Raphael(0, 0, canvas_width, canvas_height);
 	get_node_positions("contact0");
 	alert(JSON.stringify(node_positions));
+	
+	$.each(node_positions, function(key, value) {
+		R.circle(value.x*100, vertical_offset + value.y*100, 25).attr({fill: "hsb(0, 1, 1)", stroke: "none", opacity: .5});
+	});
 	//get_child_counts();
 	//alert(get_descendant_count("contact0"));	
 	//alert(JSON.stringify(counter));
