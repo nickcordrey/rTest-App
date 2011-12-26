@@ -9,9 +9,18 @@ var data =
 	"contact7":{"name": "Jemima Puddleduck", "level":3, "BI": 1, "children":[]},
 	"contact8":{"name": "Gruffalo", "level":3, "BI": 2, "children":[]}};
 	
+var team_data = 
+	{"team0":{"name": "Nick Cordrey", "contacts":["contact0","contact2"]},
+	"team1":{"name": "Nat Brooking", "contacts":["contact2","contact3", "contact4"]},
+	"team2":{"name": "Mark Priestley", "contacts":["contact5"]},
+	"team3":{"name": "James Cole", "contacts":["contact6"]}};
+	
 var canvas_width = 800;
 var canvas_height = 600;
-var vertical_offset = 200;
+var vertical_offset = 150;
+var x_spacing = 100;
+var y_spacing = 125;
+var radius_weight = 10;
 
 var counter = new Array();
 var node_positions = {};
@@ -29,30 +38,15 @@ function get_node_positions(node) {
 		x_left = node_positions[data[node].children[0]].x;
 		x_right = node_positions[data[node].children[data[node].children.length - 1]].x;
 		x_node = x_left + (x_right - x_left)/2;
-		node_positions[node] = {"x":x_node, "y":vertical_offset + data[node].level*100};
+		node_positions[node] = {"x":x_node, "y":vertical_offset + data[node].level*y_spacing};
   	}
 	else {
 		node_x++;
-		node_positions[node] = {"x":node_x*100, "y":vertical_offset + data[node].level*100};
+		node_positions[node] = {"x":node_x*x_spacing, "y":vertical_offset + data[node].level*y_spacing};
  	}
 }
 
 Raphael.fn.connection = function (node1, node2) {
-	
-}
-
-function draw_edge_paths() {
-	
-	$.each(data, function(node_id, node_values) {
-		if(node_values.children.length !== 0) {
-	
-			$.each(node_values.children, function(key, child_id) {
-				//edge_paths.push({"start":node_id, "end":child_id});
-				R.path(["M",50, 50, "L", 500, 600].join(" "));
-				//alert('connect from '+ node_id + ' to ' + child_id);
-			});
-  		}
-	});
 	
 }
 
@@ -120,14 +114,22 @@ $(document).ready( function () {
 	alert(JSON.stringify(node_positions));
 	
 	$.each(node_positions, function(key, value) {
-		R.circle(value.x, value.y, 25).attr({fill: "hsb(0, 1, 1)", stroke: "none", opacity: .5});
+		R.circle(value.x, value.y, 10 + data[key]["BI"]*radius_weight).attr({fill: "hsb(0, 1, 1)", stroke: "none"});
+	});
+	
+	$.each(team_data, function(key, value) {
+		$.each(value.contacts, function(key, contact) {
+			
+			R.circle(node_positions[contact].x, node_positions[contact].y, 10).attr({fill: "blue", stroke: "none"});
+			//alert(value);
+		});
 	});
 	
 	$.each(data, function(node_id, node_values) {
 		if(node_values.children.length !== 0) {
 			$.each(node_values.children, function(key, child_id) {
 				//edge_paths.push({"start":node_id, "end":child_id});
-				R.path(["M",node_positions[node_id].x, node_positions[node_id].y, "L", node_positions[child_id].x, node_positions[child_id].y].join(" "));
+				R.path(["M",node_positions[node_id].x, node_positions[node_id].y, "L", node_positions[child_id].x, node_positions[child_id].y].join(" ")).toBack();
 				//alert('connect from '+ node_id + ' to ' + child_id);
 			});
   		}
