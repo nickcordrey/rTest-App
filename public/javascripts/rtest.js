@@ -12,35 +12,30 @@ var canvas_height = 600;
 var vertical_offset = 200;
 
 var counter = new Array();
-//counter[0] = {"id":"contact0", "count":0};
-
+var node_positions = {};
+var node_x = 0;
 
 function get_node_positions(node) {
-	//alert(JSON.stringify(data[node].children.length));
-	// If this node is not a leaf
-	//alert('something');
+	
 	if(data[node].children.length !== 0) {
 		alert(node + ' is a branch');
 		// Then for each child
 	
 		$.each(data[node].children, function(key, value) {
-			//alert(JSON.stringify(value) + ' may be a leaf');
 			get_node_positions(value);
-		});		
+		});
+		
+		x_left = node_positions[data[node].children[0]];
+		x_right = node_positions[data[node].children[data[node].children.length]];
+		
+		//node_positions[node] = {"x":}	
   	}
 	else {
 		alert(node + ' is a leaf');
+		node_x++;
+		node_positions[node] = {"x":node_x, "y":data[node].level};
+		//node_positions.push({node:{"x":node_x, "y":data[node].level}});
  	}
-
-	// is it a leaf?
-	// if no
-		// increment the level counter
-		// then call get coords on each child
-		// once that's done decrement the level counter
-		// calc the centre point of the left most child and the rightmost child
-	// if yes
-		// increment the x counter
-		// store the x position and y position
 }
 
 
@@ -104,9 +99,11 @@ function traverse(parent) {
 $(document).ready( function () {
 	
 	//var node_positions = new Array();
+
+
     
 	get_node_positions("contact0");
-	//alert(get_child_count("contact0"));
+	alert(JSON.stringify(node_positions));
 	//get_child_counts();
 	//alert(get_descendant_count("contact0"));	
 	//alert(JSON.stringify(counter));
