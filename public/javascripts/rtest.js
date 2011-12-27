@@ -1,26 +1,28 @@
 var data =
-	{"contact0":{"name": "Barack Obama", "level":0, "BI": 5, "children":["contact1","contact2"]},
-	"contact1":{"name": "Hilary Clinton", "level":1, "BI": 1, "children":["contact3","contact4", "contact5"]},
-	"contact2":{"name": "John McCaine", "level":1, "BI": 3, "children":["contact6"]},
-	"contact3":{"name": "Nick Cordrey", "level":2, "BI": 3, "children":[]},
-	"contact4":{"name": "Natalie Brooking", "level":2, "BI": 3, "children":[]},
-	"contact5":{"name": "Paul Brooking", "level":2, "BI": 3, "children":[]},
-	"contact6":{"name": "Mary Brooking", "level":2, "BI": 3, "children":["contact7", "contact8"]},
-	"contact7":{"name": "Jemima Puddleduck", "level":3, "BI": 1, "children":[]},
-	"contact8":{"name": "Gruffalo", "level":3, "BI": 2, "children":[]}};
+	{"contact0":{"name": "Barack Obama", "level":0, "BI": 5, "children":["contact1","contact2"], "team":["team0"]},
+	"contact1":{"name": "Hilary Clinton", "level":1, "BI": 1, "children":["contact3","contact4", "contact5"], "team":["team1", "team2"]},
+	"contact2":{"name": "John McCaine", "level":1, "BI": 3, "children":["contact6"], "team":["team1", "team2"]},
+	"contact3":{"name": "Nick Cordrey", "level":2, "BI": 3, "children":[], "team":["team1", "team3"]},
+	"contact4":{"name": "Natalie Brooking", "level":2, "BI": 3, "children":[], "team":["team1", "team3"]},
+	"contact5":{"name": "Paul Brooking", "level":2, "BI": 3, "children":[], "team":[]},
+	"contact6":{"name": "Mary Brooking", "level":2, "BI": 3, "children":["contact7", "contact8"], "team":["team0"]},
+	"contact7":{"name": "Jemima Puddleduck", "level":3, "BI": 1, "children":[], "team":[]},
+	"contact8":{"name": "Gruffalo", "level":3, "BI": 2, "children":[], "team":["team1"]}};
 	
 var team_data = 
-	{"team0":{"name": "Nick Cordrey", "contacts":["contact0","contact2"]},
-	"team1":{"name": "Nat Brooking", "contacts":["contact2","contact3", "contact4"]},
-	"team2":{"name": "Mark Priestley", "contacts":["contact5"]},
-	"team3":{"name": "James Cole", "contacts":["contact6"]}};
+	{"team0":{"name": "Nick Cordrey"},
+	"team1":{"name": "Nat Brooking"},
+	"team2":{"name": "Mark Priestley"},
+	"team3":{"name": "James Cole"}};
 	
 var canvas_width = 800;
 var canvas_height = 600;
 var vertical_offset = 150;
-var x_spacing = 100;
+var x_spacing = 125;
 var y_spacing = 125;
+var radius_base = 15;
 var radius_weight = 10;
+var team_radius = 15;
 
 var counter = new Array();
 var node_positions = {};
@@ -48,6 +50,11 @@ function get_node_positions(node) {
 
 Raphael.fn.connection = function (node1, node2) {
 	
+}
+
+function roundNumber(num, dec) {
+	var result = Math.round( Math.round( num * Math.pow( 10, dec + 1 ) ) / Math.pow( 10, 1 ) ) / Math.pow(10,dec);
+	return result;
 }
 
 /*var children = 0;
@@ -111,17 +118,18 @@ $(document).ready( function () {
 
     var R = Raphael(0, 0, canvas_width, canvas_height);
 	get_node_positions("contact0");
-	alert(JSON.stringify(node_positions));
+	//alert(JSON.stringify(node_positions));
 	
 	$.each(node_positions, function(key, value) {
-		R.circle(value.x, value.y, 10 + data[key]["BI"]*radius_weight).attr({fill: "hsb(0, 1, 1)", stroke: "none"});
+		R.circle(value.x, value.y, radius_base + data[key]["BI"]*radius_weight).attr({fill: "hsb(0, 1, 1)", stroke: "none"});
 	});
 	
-	$.each(team_data, function(key, value) {
-		$.each(value.contacts, function(key, contact) {
+	$.each(data, function(contact, contact_data) {
+		//alert(JSON.stringify(value.team));
+		var team_count = contact_data.team.length;
+		$.each(contact_data.team, function(index, team_contact) {	
+			R.circle(node_positions[contact].x + Math.cos(((index+1)/team_count)*2*Math.PI)*(radius_base + data[contact]["BI"]*radius_weight), node_positions[contact].y + Math.sin(((index+1)/team_count)*2*Math.PI)*(radius_base + data[contact]["BI"]*radius_weight), team_radius).attr({fill: "blue", stroke: "none"});
 			
-			R.circle(node_positions[contact].x, node_positions[contact].y, 10).attr({fill: "blue", stroke: "none"});
-			//alert(value);
 		});
 	});
 	
