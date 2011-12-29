@@ -15,6 +15,8 @@ var team_data =
 	"team2":{"name": "Mark Priestley"},
 	"team3":{"name": "James Cole"}};
 	
+var test_node = [];
+	
 var canvas_width = 800;
 var canvas_height = 600;
 var vertical_offset = 150;
@@ -24,13 +26,17 @@ var radius_base = 15;
 var radius_weight = 10;
 var team_radius = 15;
 
+var R;
+
 var counter = new Array();
 var node_positions = {};
+var node_shapes = {};
 //var edge_paths = [];
 var node_x = 0;
 
 function get_node_positions(node) {
-	
+
+		
 	if(data[node].children.length !== 0) {
 	
 		$.each(data[node].children, function(key, value) {
@@ -48,91 +54,23 @@ function get_node_positions(node) {
  	}
 }
 
-Raphael.fn.connection = function (node1, node2) {
-	
-}
-
-function roundNumber(num, dec) {
-	var result = Math.round( Math.round( num * Math.pow( 10, dec + 1 ) ) / Math.pow( 10, 1 ) ) / Math.pow(10,dec);
-	return result;
-}
-
-/*var children = 0;
-function get_child_count(node) {
-	for(i=0; i < data.length; i++) {
-		if(data[i].parent == node) {
-			children = children + get_child_count(data[i]._id);
-		}
-	}
-	return children;
-}
-
-function get_descendants(node) {
-	descendants = 0;
-	for(i=0; i < data.length; i++) {
-		
-	}
-}
-
-function get_child_counts() {
-	
-	for(i=0; i < data.length; i++) {
-		id = data[i]._id;
-		counter[i] = {"id":id, "count":0};
-		for(j=0; j < data.length; j++) {
-			if(data[j].parent == id) {
-				// This is a child
-				//alert([data[j]._id, id].join(","));
-				counter[i].count = counter[i].count + 1;  
-				//alert(JSON.stringify(counter));
-			}
-		}
-	}
-}
-
-function get_descendant_count(node) {
-	local_count = 0;
-	for(i=0; i < data.length; i++) {
-		if(data[i].parent == node) {
-			//alert(counter[i].count);
-			local_count = local_count + counter[i].count;
-		}
-	}
-	return local_count;
-}*/
-
-/*var t_counter = 0;
-function traverse(parent) {
-	for(i=0; i < data.length; i++) {
-		id = data[i]._id;
-		//alert(data[i].parent);
-		if(data[i].parent == id) {
-			alert(id);
-		  traverse();
-		  t_counter++;
-		}
-	}
-}*/
-
-$(document).ready( function () {
-
-    var R = Raphael(0, 0, canvas_width, canvas_height);
-	get_node_positions("contact0");
-	//alert(JSON.stringify(node_positions));
-	
+function draw_nodes() {
 	$.each(node_positions, function(key, value) {
-		R.circle(value.x, value.y, radius_base + data[key]["BI"]*radius_weight).attr({fill: "hsb(0, 1, 1)", stroke: "none"});
+		node_shapes[key] = R.circle(value.x, value.y, radius_base + data[key]["BI"]*radius_weight).attr({fill: "hsb(0, 1, 1)", stroke: "none"});
 	});
-	
+}
+
+function draw_team() {
 	$.each(data, function(contact, contact_data) {
-		//alert(JSON.stringify(value.team));
 		var team_count = contact_data.team.length;
 		$.each(contact_data.team, function(index, team_contact) {	
 			R.circle(node_positions[contact].x + Math.cos(((index+1)/team_count)*2*Math.PI)*(radius_base + data[contact]["BI"]*radius_weight), node_positions[contact].y + Math.sin(((index+1)/team_count)*2*Math.PI)*(radius_base + data[contact]["BI"]*radius_weight), team_radius).attr({fill: "blue", stroke: "none"});
 			
 		});
 	});
-	
+}
+
+function draw_edges() {
 	$.each(data, function(node_id, node_values) {
 		if(node_values.children.length !== 0) {
 			$.each(node_values.children, function(key, child_id) {
@@ -142,15 +80,64 @@ $(document).ready( function () {
 			});
   		}
 	});
+}
+
+function addNode() {
+	//alert(JSON.stringify(node_positions));
+	//alert('added a node');
+	data["contact9"] = {"name": "Winnie the Pooh", "level":2, "BI": 2, "children":[], "team":[]};
+	data["contact1"].children.push("contact9");
+	//alert(JSON.stringify(data));
 	
-	//draw_edge_paths();
-	//R.path(["M",50, 50, "L", 500, 600].join(" "));
-	//get_child_counts();
-	//alert(get_descendant_count("contact0"));	
-	//alert(JSON.stringify(edge_positions));
 	
-	//traverse();
-	//alert(t_counter);
+	node_x=0;
+	
+	get_node_positions("contact0");
+	alert(JSON.stringify(node_positions));
+	
+	$.each(node_positions, function(key, value) {
+		//alert(node_positions["contact0"].r.attr('cx'));
+		//alert(JSON.stringify(value));
+		if(node_shapes[key] == undefined) {
+			//alert(key + ' is new!');
+			node_shapes[key] = R.circle(value.x, value.y, radius_base + data[key]["BI"]*radius_weight).attr({fill: "hsb(0, 1, 1)", stroke: "none"});
+		}
+		else {
+			if(node_shapes[key].attr('cx') != value.x) {
+				//alert('does this');
+				node_shapes[key].animate({cx : value.x}, 500);
+			}
+			//alert('old ' + node_shapes[key].attr('cx') + ' new ' + value.x);
+		}
+	});
+	
+	//alert(node_shapes["contact0"]);
+	
+	//R.clear();
+	//draw_nodes();
+	
+	// Go through node positions
+	// If new (i.e. r doesn't exist) add it and draw it
+	// If changed animate to new position
+	// If unchanged leave it
+}
+
+function test_update_nodes() {
+	test_node.push(R.circle(200,300,50).attr({fill: "gray", stroke: "none"}));
+}
+
+function test_animate_nodes() {
+	test_node[0].animate({cx: 500}, 500, ">");
+}
+
+$(document).ready( function () {
+
+    R = Raphael(0, 100, canvas_width, canvas_height);
+	get_node_positions("contact0");
+	alert(JSON.stringify(node_positions));
+	draw_nodes();
+	draw_team();
+	draw_edges();
 
 			/*var R = Raphael(0, 0, canvas_width, canvas_height);
 				var contact_nodes = new Array();
