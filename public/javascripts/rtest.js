@@ -19,18 +19,21 @@ var test_node = [];
 	
 var canvas_width = 800;
 var canvas_height = 600;
-var vertical_offset = 150;
+var vertical_offset = 100;
 var x_spacing = 125;
 var y_spacing = 125;
 var radius_base = 15;
 var radius_weight = 10;
 var team_radius = 15;
+var animation_duration = 300;
 
 var R;
 
 var counter = new Array();
 var node_positions = {};
 var node_shapes = {};
+var team_shapes = {};
+var path_shapes = {};
 //var edge_paths = [];
 var node_x = 0;
 
@@ -64,7 +67,7 @@ function draw_team() {
 	$.each(data, function(contact, contact_data) {
 		var team_count = contact_data.team.length;
 		$.each(contact_data.team, function(index, team_contact) {	
-			R.circle(node_positions[contact].x + Math.cos(((index+1)/team_count)*2*Math.PI)*(radius_base + data[contact]["BI"]*radius_weight), node_positions[contact].y + Math.sin(((index+1)/team_count)*2*Math.PI)*(radius_base + data[contact]["BI"]*radius_weight), team_radius).attr({fill: "blue", stroke: "none"});
+			team_shapes[contact+team_contact] = R.circle(node_positions[contact].x + Math.cos(((index+1)/team_count)*2*Math.PI)*(radius_base + data[contact]["BI"]*radius_weight), node_positions[contact].y + Math.sin(((index+1)/team_count)*2*Math.PI)*(radius_base + data[contact]["BI"]*radius_weight), team_radius).attr({fill: "blue", stroke: "none"});
 			
 		});
 	});
@@ -75,41 +78,63 @@ function draw_edges() {
 		if(node_values.children.length !== 0) {
 			$.each(node_values.children, function(key, child_id) {
 				//edge_paths.push({"start":node_id, "end":child_id});
-				R.path(["M",node_positions[node_id].x, node_positions[node_id].y, "L", node_positions[child_id].x, node_positions[child_id].y].join(" ")).toBack();
+				path_shapes[node_id+child_id] = R.path(["M",node_positions[node_id].x, node_positions[node_id].y, "L", node_positions[child_id].x, node_positions[child_id].y].join(" ")).toBack();
 				//alert('connect from '+ node_id + ' to ' + child_id);
 			});
   		}
 	});
 }
 
-function addNode() {
-	//alert(JSON.stringify(node_positions));
-	//alert('added a node');
-	data["contact9"] = {"name": "Winnie the Pooh", "level":2, "BI": 2, "children":[], "team":[]};
-	data["contact1"].children.push("contact9");
-	//alert(JSON.stringify(data));
-	
+function addNode(node_id, parent_id, node_data) {
+
+	data[node_id] = node_data;
+	data[parent_id].children.push(node_id);
 	
 	node_x=0;
 	
 	get_node_positions("contact0");
-	alert(JSON.stringify(node_positions));
+	//alert(JSON.stringify(node_positions));
+	//alert(team_shapes["contact0team0"].attr("x"));
 	
-	$.each(node_positions, function(key, value) {
-		//alert(node_positions["contact0"].r.attr('cx'));
-		//alert(JSON.stringify(value));
-		if(node_shapes[key] == undefined) {
+	$.each(node_positions, function(node, value) {
+
+		if(node_shapes[node] == undefined) {
 			//alert(key + ' is new!');
-			node_shapes[key] = R.circle(value.x, value.y, radius_base + data[key]["BI"]*radius_weight).attr({fill: "hsb(0, 1, 1)", stroke: "none"});
+			node_shapes[node] = R.circle(value.x, value.y, radius_base + data[node]["BI"]*radius_weight).attr({fill: "hsb(0, 1, 1)", stroke: "none"}).attr({opacity:0.0}).animate({opacity:1.0}, animation_duration);
+			// and add any team nodes!
 		}
 		else {
-			if(node_shapes[key].attr('cx') != value.x) {
-				//alert('does this');
-				node_shapes[key].animate({cx : value.x}, 500);
+			if(node_shapes[node].attr('cx') != value.x) {
+				
+				// Move the node
+				node_shapes[node].animate({cx : value.x}, animation_duration);
+				
+				// Move any team child nodes
+				var team_count = data[node].team.length;
+				$.each(data[node].team, function(index, team_contact) {
+					if(team_shapes[node+team_contact]) {
+						team_x = node_positions[node].x + Math.cos(((index+1)/team_count)*2*Math.PI)*(radius_base + data[node]["BI"]*radius_weight);
+						team_y = node_positions[node].y + Math.sin(((index+1)/team_count)*2*Math.PI)*(radius_base + data[node]["BI"]*radius_weight);
+						team_shapes[node+team_contact].animate({cx : team_x, cy : team_y}, animation_duration);
+					}	
+				});
 			}
-			//alert('old ' + node_shapes[key].attr('cx') + ' new ' + value.x);
 		}
+		
+		// Create any new connectors, move any existing ones
+		if(data[node].children.length !== 0) {
+			$.each(data[node].children, function(key, child_id) {
+				if(path_shapes[node+child_id]) {
+					path_shapes[node+child_id].animate({path : ["M",node_positions[node].x, node_positions[node].y, "L", node_positions[child_id].x, node_positions[child_id].y].join(" ")}, animation_duration);
+				}
+				else {
+					path_shapes[node+child_id] = R.path(["M",node_positions[node].x, node_positions[node].y, "L", node_positions[child_id].x, node_positions[child_id].y].join(" ")).toBack().attr({opacity:0.0}).animate({opacity:1.0}, animation_duration);
+				}
+			});
+  		}
+		
 	});
+	
 	
 	//alert(node_shapes["contact0"]);
 	
@@ -134,7 +159,7 @@ $(document).ready( function () {
 
     R = Raphael(0, 100, canvas_width, canvas_height);
 	get_node_positions("contact0");
-	alert(JSON.stringify(node_positions));
+	//alert(JSON.stringify(node_positions));
 	draw_nodes();
 	draw_team();
 	draw_edges();
