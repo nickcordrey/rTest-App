@@ -138,9 +138,8 @@ function addNode(node_id, parent_id, node_data) {
 
 function addTeamNode(team_id, node_id) {
 	
-	// Need to add a check that the team contact isn't already in the team
 	if($.inArray(team_id, data[node_id].team) == -1 && data[node_id]) {
-		//alert($.inArray((team_id, data[node_id].team)));
+		
 		data[node_id].team.push(team_id);
 
 		var team_count = data[node_id].team.length;
@@ -149,8 +148,6 @@ function addTeamNode(team_id, node_id) {
 
 			team_x = node_positions[node_id].x + Math.cos(((index+1)/team_count)*2*Math.PI)*(radius_base + data[node_id]["BI"]*radius_weight);
 			team_y = node_positions[node_id].y + Math.sin(((index+1)/team_count)*2*Math.PI)*(radius_base + data[node_id]["BI"]*radius_weight);
-
-			//alert([team_x,team_y].join(", "));
 
 			if(team_shapes[node_id+team_id]) {	
 				team_shapes[node_id+team_id].animate({cx : team_x, cy : team_y}, animation_duration);
