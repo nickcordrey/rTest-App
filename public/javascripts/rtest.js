@@ -24,7 +24,7 @@ var canvas_height = 600;
 var vertical_offset = 100;
 var x_spacing = 125;
 var y_spacing = 125;
-var radius_base = 15;
+var radius_base = 18;
 var radius_weight = 8;
 var team_radius = 15;
 var animation_duration = 250;
@@ -153,6 +153,8 @@ function addNode(node_id, parent_id, node_data) {
 
 function addTeamNode(team_id, node_id) {
 	
+	//alert(node_id);
+	
 	if($.inArray(team_id, data[node_id].team) == -1 && data[node_id]) {
 		
 		data[node_id].team.push(team_id);
@@ -175,14 +177,6 @@ function addTeamNode(team_id, node_id) {
 	}
 }
 
-function test_update_nodes() {
-	test_node.push(R.circle(200,300,50).attr({fill: "gray", stroke: "none"}));
-}
-
-function test_animate_nodes() {
-	test_node[0].animate({cx: 500}, 500, ">");
-}
-
 $(document).ready( function () {
 
     R = Raphael("svg", "100%", "100%");
@@ -200,9 +194,13 @@ $(document).ready( function () {
 	    $("span").html("X: " + mouseX + "   Y: " + mouseY); 
 	});
 	//$('#id_team0').html('<ul><li id = "id_team0">John Kelly</li></ul>');
+	$('#id_contact0').draggable({ cursor: 'pointer', revert: true, stop: function(event, ui) {
+		var element = R.getElementByPoint(mouseX, mouseY);
+		if(element != null) addNode("contact9", element.node.id, {"name": "Winnie the Pooh", "level":3, "BI": 2, "children":[], "team":[]});
+	} });
 	$('#id_team0').draggable({ cursor: 'pointer', revert: true, stop: function(event, ui) {
-		//alert(R.getElementByPoint(mouseX, mouseY).node.id);
-		addNode("contact9", R.getElementByPoint(mouseX, mouseY).node.id, {"name": "Winnie the Pooh", "level":3, "BI": 2, "children":[], "team":[]});
+		var element = R.getElementByPoint(mouseX, mouseY);
+		if(element != null) addTeamNode("team0", element.node.id);
 	} });
 
 			/*var R = Raphael(0, 0, canvas_width, canvas_height);
