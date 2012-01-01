@@ -1,13 +1,13 @@
 var data =
-	{"contact0":{"name": "Barack Obama", "level":0, "BI": 5, "children":["contact1","contact2"], "team":["team0"]},
-	"contact1":{"name": "Hilary Clinton", "level":1, "BI": 1, "children":["contact3","contact4", "contact5"], "team":["team1", "team2"]},
-	"contact2":{"name": "John McCaine", "level":1, "BI": 3, "children":["contact6"], "team":["team1", "team2"]},
-	"contact3":{"name": "Nick Cordrey", "level":2, "BI": 3, "children":[], "team":["team1", "team3"]},
-	"contact4":{"name": "Natalie Brooking", "level":2, "BI": 3, "children":[], "team":["team1", "team3"]},
-	"contact5":{"name": "Paul Brooking", "level":2, "BI": 3, "children":[], "team":[]},
-	"contact6":{"name": "Mary Brooking", "level":2, "BI": 3, "children":["contact7", "contact8"], "team":["team0"]},
-	"contact7":{"name": "Jemima Puddleduck", "level":3, "BI": 1, "children":[], "team":[]},
-	"contact8":{"name": "Gruffalo", "level":3, "BI": 2, "children":[], "team":["team1"]}};
+	{"contact0":{"name": "Barack Obama", "BI": 5, "children":["contact1","contact2"], "team":["team0"]},
+	"contact1":{"name": "Hilary Clinton", "BI": 1, "children":["contact3","contact4", "contact5"], "team":["team1", "team2"]},
+	"contact2":{"name": "John McCaine", "BI": 3, "children":["contact6"], "team":["team1", "team2"]},
+	"contact3":{"name": "Nick Cordrey", "BI": 3, "children":[], "team":["team1", "team3"]},
+	"contact4":{"name": "Natalie Brooking", "BI": 3, "children":[], "team":["team1", "team3"]},
+	"contact5":{"name": "Paul Brooking", "BI": 3, "children":[], "team":[]},
+	"contact6":{"name": "Mary Brooking", "BI": 3, "children":["contact7", "contact8"], "team":["team0"]},
+	"contact7":{"name": "Jemima Puddleduck", "BI": 1, "children":[], "team":[]},
+	"contact8":{"name": "Gruffalo", "BI": 2, "children":[], "team":["team1"]}};
 	
 var team_data = 
 	{"team0":{"name": "Nick Cordrey"},
@@ -42,23 +42,23 @@ var node_x = 0;
 var mouseX;
 var mouseY;
 
-function get_node_positions(node) {
+function get_node_positions(node, level) {
 
 		
 	if(data[node].children.length !== 0) {
-	
+		level++;
 		$.each(data[node].children, function(key, value) {
-			get_node_positions(value);
+			get_node_positions(value, level);
 		});
-	
+		level--;
 		x_left = node_positions[data[node].children[0]].x;
 		x_right = node_positions[data[node].children[data[node].children.length - 1]].x;
 		x_node = x_left + (x_right - x_left)/2;
-		node_positions[node] = {"x":x_node, "y":vertical_offset + data[node].level*y_spacing};
+		node_positions[node] = {"x":x_node, "y":vertical_offset + level*y_spacing};
   	}
 	else {
 		node_x++;
-		node_positions[node] = {"x":node_x*x_spacing, "y":vertical_offset + data[node].level*y_spacing};
+		node_positions[node] = {"x":node_x*x_spacing, "y":vertical_offset + level*y_spacing};
  	}
 }
 
@@ -98,7 +98,7 @@ function addNode(node_id, parent_id, node_data) {
 	
 	node_x=0;
 	
-	get_node_positions("contact0");
+	get_node_positions("contact0", 0);
 	//alert(JSON.stringify(node_positions));
 	//alert(team_shapes["contact0team0"].attr("x"));
 	
@@ -176,8 +176,8 @@ function test_animate_nodes() {
 
 $(document).ready( function () {
 
-    R = Raphael("svg", canvas_width, canvas_height);
-	get_node_positions("contact0");
+    R = Raphael("svg", "100%", "100%");
+	get_node_positions("contact0", 0);
 	//alert(JSON.stringify(node_positions));
 	draw_nodes();
 	draw_team();
