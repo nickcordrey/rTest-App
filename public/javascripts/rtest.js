@@ -25,15 +25,17 @@ var vertical_offset = 100;
 var x_spacing = 125;
 var y_spacing = 125;
 var radius_base = 15;
-var radius_weight = 10;
+var radius_weight = 8;
 var team_radius = 15;
-var animation_duration = 300;
+var animation_duration = 250;
+var label_y_offset = 12;
 
 var R;
 
 var counter = new Array();
 var node_positions = {};
 var node_shapes = {};
+var node_labels = {};
 var team_shapes = {};
 var path_shapes = {};
 //var edge_paths = [];
@@ -66,6 +68,7 @@ function draw_nodes() {
 	$.each(node_positions, function(key, value) {
 		node_shapes[key] = R.circle(value.x, value.y, radius_base + data[key]["BI"]*radius_weight).attr({fill: "hsb(0, 1, 1)", stroke: "none"});
 		node_shapes[key].node.id = key;
+		node_labels[key] = R.text(value.x, value.y - (radius_base + data[key]["BI"]*radius_weight + label_y_offset), data[key]["name"]).attr({'font-size': '12px'});
 	});
 }
 
@@ -105,15 +108,18 @@ function addNode(node_id, parent_id, node_data) {
 	$.each(node_positions, function(node, value) {
 
 		if(node_shapes[node] == undefined) {
-			//alert(key + ' is new!');
+	
 			node_shapes[node] = R.circle(value.x, value.y, radius_base + data[node]["BI"]*radius_weight).attr({fill: "hsb(0, 1, 1)", stroke: "none"}).attr({opacity:0.0}).animate({opacity:1.0}, animation_duration);
-			// and add any team nodes!
+			node_labels[node] = R.text(value.x, value.y - (radius_base + data[node]["BI"]*radius_weight + label_y_offset), data[node]["name"]).attr({'font-size': '12px'});
 		}
 		else {
 			if(node_shapes[node].attr('cx') != value.x) {
 				
 				// Move the node
 				node_shapes[node].animate({cx : value.x}, animation_duration);
+				
+				// Move the label
+				node_labels[node].animate({x : value.x}, animation_duration);
 				
 				// Move any team child nodes
 				var team_count = data[node].team.length;
@@ -124,6 +130,7 @@ function addNode(node_id, parent_id, node_data) {
 						team_shapes[node+team_contact].animate({cx : team_x, cy : team_y}, animation_duration);
 					}	
 				});
+				
 			}
 		}
 		
@@ -138,6 +145,8 @@ function addNode(node_id, parent_id, node_data) {
 				}
 			});
   		}
+
+
 		
 	});
 }
