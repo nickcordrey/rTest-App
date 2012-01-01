@@ -22,6 +22,7 @@ var canvas_horizontal_offset = 0;
 var canvas_width = 800;
 var canvas_height = 600;
 var vertical_offset = 100;
+var centre_offset = 0;
 var x_spacing = 125;
 var y_spacing = 125;
 var radius_base = 18;
@@ -45,8 +46,7 @@ var mouseX;
 var mouseY;
 
 function get_node_positions(node, level) {
-
-		
+	
 	if(data[node].children.length !== 0) {
 		level++;
 		$.each(data[node].children, function(key, value) {
@@ -62,6 +62,21 @@ function get_node_positions(node, level) {
 		node_x++;
 		node_positions[node] = {"x":node_x*x_spacing, "y":vertical_offset + level*y_spacing};
  	}
+}
+
+// ** This doesn't really work when you start adding nodes
+function centre_node_positions() {
+	var svg_width = $('#svg').width();
+	if(centre_offset == 0 && node_positions["contact0"].x < svg_width/2) {
+		centre_offset = svg_width/2 - node_positions["contact0"].x;
+	}
+	
+	if(centre_offset != 0) {
+	//alert(centre_offset);	
+		$.each(node_positions, function(key, value) {
+			node_positions[key]["x"] = value.x + centre_offset;
+		});
+	}
 }
 
 function draw_nodes() {
@@ -102,6 +117,8 @@ function addNode(node_id, parent_id, node_data) {
 	node_x=0;
 	
 	get_node_positions("contact0", 0);
+	centre_node_positions();
+	
 	//alert(JSON.stringify(node_positions));
 	//alert(team_shapes["contact0team0"].attr("x"));
 	
@@ -181,6 +198,7 @@ $(document).ready( function () {
 
     R = Raphael("svg", "100%", "100%");
 	get_node_positions("contact0", 0);
+	centre_node_positions();
 	//alert(JSON.stringify(node_positions));
 	draw_nodes();
 	draw_team();
