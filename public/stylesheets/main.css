@@ -18,6 +18,11 @@
 	padding-left: 10px;
 }
 
+#left-bar ul li {
+	margin-left: 15px;
+	list-style-type:square;
+}
+
 p {
 	margin: 5px;
 }

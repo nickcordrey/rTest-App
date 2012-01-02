@@ -1,13 +1,14 @@
 var data =
-	{"contact0":{"name": "Barack Obama", "BI": 5, "children":["contact1","contact2"], "team":["team0"]},
-	"contact1":{"name": "Hilary Clinton", "BI": 1, "children":["contact3","contact4", "contact5"], "team":["team1", "team2"]},
-	"contact2":{"name": "John McCaine", "BI": 3, "children":["contact6"], "team":["team1", "team2"]},
-	"contact3":{"name": "Nick Cordrey", "BI": 3, "children":[], "team":["team1", "team3"]},
-	"contact4":{"name": "Natalie Brooking", "BI": 3, "children":[], "team":["team1", "team3"]},
-	"contact5":{"name": "Paul Brooking", "BI": 3, "children":[], "team":[]},
-	"contact6":{"name": "Mary Brooking", "BI": 3, "children":["contact7", "contact8"], "team":["team0"]},
-	"contact7":{"name": "Jemima Puddleduck", "BI": 1, "children":[], "team":[]},
-	"contact8":{"name": "Gruffalo", "BI": 2, "children":[], "team":["team1"]}};
+	{"contact0":{"active": true, "name": "Barack Obama", "BI": 5, "children":["contact1","contact2"], "team":["team0"]},
+	"contact1":{"active": true, "name": "Hilary Clinton", "BI": 1, "children":["contact3","contact4", "contact5"], "team":["team1", "team2"]},
+	"contact2":{"active": true, "name": "John McCaine", "BI": 3, "children":["contact6"], "team":["team1", "team2"]},
+	"contact3":{"active": true, "name": "Nick Cordrey", "BI": 3, "children":[], "team":["team1", "team3"]},
+	"contact4":{"active": true, "name": "Natalie Brooking", "BI": 3, "children":[], "team":["team1", "team3"]},
+	"contact5":{"active": true, "name": "Paul Brooking", "BI": 3, "children":[], "team":[]},
+	"contact6":{"active": true, "name": "Mary Brooking", "BI": 3, "children":["contact7"], "team":["team0"]},
+	"contact7":{"active": true, "name": "Jemima Puddleduck", "BI": 1, "children":[], "team":[]},
+	"contact8":{"active": false, "name": "Gruffalo", "BI": 2, "children":[], "team":[]},
+	"contact9":{"active": false, "name": "Winnie the Pooh", "BI": 2, "children":[], "team":[]}};
 	
 var team_data = 
 	{"team0":{"name": "Nick Cordrey"},
@@ -88,6 +89,7 @@ function draw_nodes() {
 }
 
 function draw_team() {
+	// Need to add check as not worth drawing team for nodes not drawn
 	$.each(data, function(contact, contact_data) {
 		var team_count = contact_data.team.length;
 		$.each(contact_data.team, function(index, team_contact) {	
@@ -109,9 +111,9 @@ function draw_edges() {
 	});
 }
 
-function addNode(node_id, parent_id, node_data) {
+function addNode(node_id, parent_id) {
 
-	data[node_id] = node_data;
+	//data[node_id] = node_data;
 	data[parent_id].children.push(node_id);
 	
 	node_x=0;
@@ -209,17 +211,33 @@ $(document).ready( function () {
 	$('body').mousemove(function(e) { 
 	    mouseX = e.pageX;// - this.offsetLeft; 
 	    mouseY = e.pageY;// - this.offsetTop; 
-	    $("span").html("X: " + mouseX + "   Y: " + mouseY); 
+	    //$("span").html("X: " + mouseX + "   Y: " + mouseY); 
 	});
 	//$('#id_team0').html('<ul><li id = "id_team0">John Kelly</li></ul>');
-	$('#id_contact0').draggable({ cursor: 'pointer', revert: true, stop: function(event, ui) {
-		var element = R.getElementByPoint(mouseX, mouseY);
-		if(element != null) addNode("contact9", element.node.id, {"name": "Winnie the Pooh", "level":3, "BI": 2, "children":[], "team":[]});
-	} });
-	$('#id_team0').draggable({ cursor: 'pointer', revert: true, stop: function(event, ui) {
-		var element = R.getElementByPoint(mouseX, mouseY);
-		if(element != null) addTeamNode("team0", element.node.id);
-	} });
+	$.each(data, function(key, value) {
+		if(value.active == true) {
+			$('#account').append('<li style="color:#98FB98;" id="id_' + key + '"><span style="color:#000000;">'+ value.name + '</span></li>');
+		}
+		else {
+			$('#account').append('<li id="id_' + key + '">'+ value.name + '</li>');
+		}
+		
+		$('#id_' + key).draggable({ cursor: 'pointer', revert: true, stop: function(event, ui) {
+			var element = R.getElementByPoint(mouseX, mouseY);
+			if(element != null) addNode(key, element.node.id);
+		} });
+	});
+	
+	$.each(team_data, function(key, value) {
+		$('#team').append('<li id="id_' + key + '">'+ value.name + '</li>');
+		$('#id_' + key).draggable({ cursor: 'pointer', revert: true, stop: function(event, ui) {
+			var element = R.getElementByPoint(mouseX, mouseY);
+			if(element != null) addTeamNode(key, element.node.id);
+		} });
+	});
+	
+	
+	
 
 			/*var R = Raphael(0, 0, canvas_width, canvas_height);
 				var contact_nodes = new Array();
