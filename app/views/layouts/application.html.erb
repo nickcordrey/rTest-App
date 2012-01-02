@@ -5,25 +5,27 @@
   <%= stylesheet_link_tag :all %>
   <%= javascript_include_tag :defaults, "jquery-1.7.1", "jquery-ui-1.8.16.custom.min", "raphael", "rtest" %>
   <%= csrf_meta_tag %>
- <style>
-        g.node {
-            font-family: Verdana, Helvetica;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        circle.node-dot {
-            fill: lightsalmon;
-            stroke: red;
-            stroke-width: 1px;
-        }
-
-        path.link {
-            fill: none;
-            stroke: gray;
-        }
-    </style>
 </head>
 <body>
+	<div id="page-header">
+        <div class="wrapper">
+            <div id="title">
+			<p>rMap Playground</p>
+			</div> 
+            <div id="utilities">
+                <div id="account-utilities">
+                    <nav>                        
+                        <ul>
+                            <li id="user"><a href="#">John Kelly</a></li>
+                         
+                            <li><a href="#">help</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+
+        </div> <!-- eo .wrapper -->
+    </div> <!-- eo #page-header -->
 
 <%= yield %>
 

@@ -21,11 +21,11 @@ var canvas_vertical_offset = 200;
 var canvas_horizontal_offset = 0;
 var canvas_width = 800;
 var canvas_height = 600;
-var vertical_offset = 100;
+var vertical_offset = 150;
 var centre_offset = 0;
 var x_spacing = 125;
 var y_spacing = 125;
-var radius_base = 18;
+var radius_base = 20;
 var radius_weight = 8;
 var team_radius = 15;
 var animation_duration = 250;
@@ -81,7 +81,7 @@ function centre_node_positions() {
 
 function draw_nodes() {
 	$.each(node_positions, function(key, value) {
-		node_shapes[key] = R.circle(value.x, value.y, radius_base + data[key]["BI"]*radius_weight).attr({fill: "hsb(0, 1, 1)", stroke: "none"});
+		node_shapes[key] = R.circle(value.x, value.y, radius_base + data[key]["BI"]*radius_weight).attr({fill: "#98FB98", stroke: "#ffffff", "stroke-width": 5});
 		node_shapes[key].node.id = key;
 		node_labels[key] = R.text(value.x, value.y - (radius_base + data[key]["BI"]*radius_weight + label_y_offset), data[key]["name"]).attr({'font-size': '12px'});
 	});
@@ -91,7 +91,7 @@ function draw_team() {
 	$.each(data, function(contact, contact_data) {
 		var team_count = contact_data.team.length;
 		$.each(contact_data.team, function(index, team_contact) {	
-			team_shapes[contact+team_contact] = R.circle(node_positions[contact].x + Math.cos(((index+1)/team_count)*2*Math.PI)*(radius_base + data[contact]["BI"]*radius_weight), node_positions[contact].y + Math.sin(((index+1)/team_count)*2*Math.PI)*(radius_base + data[contact]["BI"]*radius_weight), team_radius).attr({fill: "blue", stroke: "none"});
+			team_shapes[contact+team_contact] = R.circle(node_positions[contact].x + Math.cos(((index+1)/team_count)*2*Math.PI)*(radius_base + data[contact]["BI"]*radius_weight), node_positions[contact].y + Math.sin(((index+1)/team_count)*2*Math.PI)*(radius_base + data[contact]["BI"]*radius_weight), team_radius).attr({fill: "#FFF68F", stroke: "#ffffff", "stroke-width": 3});
 			
 		});
 	});
@@ -102,7 +102,7 @@ function draw_edges() {
 		if(node_values.children.length !== 0) {
 			$.each(node_values.children, function(key, child_id) {
 				//edge_paths.push({"start":node_id, "end":child_id});
-				path_shapes[node_id+child_id] = R.path(["M",node_positions[node_id].x, node_positions[node_id].y, "L", node_positions[child_id].x, node_positions[child_id].y].join(" ")).toBack();
+				path_shapes[node_id+child_id] = R.path(["M",node_positions[node_id].x, node_positions[node_id].y, "L", node_positions[child_id].x, node_positions[child_id].y].join(" ")).attr({stroke: "#ffffff", "stroke-width": 5}).toBack();
 				//alert('connect from '+ node_id + ' to ' + child_id);
 			});
   		}
@@ -126,7 +126,7 @@ function addNode(node_id, parent_id, node_data) {
 
 		if(node_shapes[node] == undefined) {
 	
-			node_shapes[node] = R.circle(value.x, value.y, radius_base + data[node]["BI"]*radius_weight).attr({fill: "hsb(0, 1, 1)", stroke: "none"}).attr({opacity:0.0}).animate({opacity:1.0}, animation_duration);
+			node_shapes[node] = R.circle(value.x, value.y, radius_base + data[node]["BI"]*radius_weight).attr({fill: "#98FB98", stroke: "#ffffff", "stroke-width": 5}).attr({opacity:0.0}).animate({opacity:1.0}, animation_duration);
 			node_labels[node] = R.text(value.x, value.y - (radius_base + data[node]["BI"]*radius_weight + label_y_offset), data[node]["name"]).attr({'font-size': '12px'});
 		}
 		else {
@@ -158,7 +158,7 @@ function addNode(node_id, parent_id, node_data) {
 					path_shapes[node+child_id].animate({path : ["M",node_positions[node].x, node_positions[node].y, "L", node_positions[child_id].x, node_positions[child_id].y].join(" ")}, animation_duration);
 				}
 				else {
-					path_shapes[node+child_id] = R.path(["M",node_positions[node].x, node_positions[node].y, "L", node_positions[child_id].x, node_positions[child_id].y].join(" ")).toBack().attr({opacity:0.0}).animate({opacity:1.0}, animation_duration);
+					path_shapes[node+child_id] = R.path(["M",node_positions[node].x, node_positions[node].y, "L", node_positions[child_id].x, node_positions[child_id].y].join(" ")).toBack().attr({stroke: "#ffffff", "stroke-width": 5}).attr({opacity:0.0}).animate({opacity:1.0}, animation_duration);
 				}
 			});
   		}
@@ -188,7 +188,7 @@ function addTeamNode(team_id, node_id) {
 				//team_shapes[node_id+team_id].attr({cx : team_x, cy : team_y});
 			}
 			else {	
-				team_shapes[node_id+team_id] = R.circle(team_x, team_y, team_radius).attr({fill: "blue", stroke: "none"});
+				team_shapes[node_id+team_id] = R.circle(team_x, team_y, team_radius).attr({fill: "#FFF68F", stroke: "#ffffff", "stroke-width": 3});
 			}
 		});
 	}
