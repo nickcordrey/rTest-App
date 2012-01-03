@@ -82,7 +82,7 @@ function centre_node_positions() {
 
 function draw_nodes() {
 	$.each(node_positions, function(key, value) {
-		node_shapes[key] = R.circle(value.x, value.y, radius_base + data[key]["BI"]*radius_weight).attr({fill: "#98FB98", stroke: "#ffffff", "stroke-width": 5});
+		node_shapes[key] = R.circle(value.x, value.y, radius_base + data[key]["BI"]*radius_weight).attr({fill: "#98FB98", stroke: "#ffffff", "stroke-width": 5}).mouseover(function () { this.animate({"r" : this.attr("r") + 10}, 100)}).mouseout(function () { this.animate({"r" : this.attr("r") - 10}, 100)});
 		node_shapes[key].node.id = key;
 		node_labels[key] = R.text(value.x, value.y - (radius_base + data[key]["BI"]*radius_weight + label_y_offset), data[key]["name"]).attr({'font-size': '12px'});
 	});
