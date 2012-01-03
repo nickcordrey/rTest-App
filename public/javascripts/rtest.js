@@ -82,7 +82,7 @@ function centre_node_positions() {
 
 function draw_nodes() {
 	$.each(node_positions, function(key, value) {
-		node_shapes[key] = R.circle(value.x, value.y, radius_base + data[key]["BI"]*radius_weight).attr({fill: "#98FB98", stroke: "#ffffff", "stroke-width": 5}).mouseover(function () { this.animate({"r" : this.attr("r") + 10}, 100)}).mouseout(function () { this.animate({"r" : this.attr("r") - 10}, 100)});
+		node_shapes[key] = R.circle(value.x, value.y, radius_base + data[key]["BI"]*radius_weight).attr({fill: "#98FB98", stroke: "#ffffff", "stroke-width": 5});//.mouseover(function () { this.animate({"r" : this.attr("r") + 10}, 100)}).mouseout(function () { this.animate({"r" : this.attr("r") - 10}, 100)});
 		node_shapes[key].node.id = key;
 		node_labels[key] = R.text(value.x, value.y - (radius_base + data[key]["BI"]*radius_weight + label_y_offset), data[key]["name"]).attr({'font-size': '12px'});
 	});
@@ -129,6 +129,7 @@ function addNode(node_id, parent_id) {
 		if(node_shapes[node] == undefined) {
 	
 			node_shapes[node] = R.circle(value.x, value.y, radius_base + data[node]["BI"]*radius_weight).attr({fill: "#98FB98", stroke: "#ffffff", "stroke-width": 5}).attr({opacity:0.0}).animate({opacity:1.0}, animation_duration);
+			node_shapes[node].node.id = node;
 			node_labels[node] = R.text(value.x, value.y - (radius_base + data[node]["BI"]*radius_weight + label_y_offset), data[node]["name"]).attr({'font-size': '12px'});
 		}
 		else {
@@ -164,10 +165,8 @@ function addNode(node_id, parent_id) {
 				}
 			});
   		}
-
-
-		
 	});
+	//alert(JSON.stringify(data));
 }
 
 function addTeamNode(team_id, node_id) {
@@ -232,52 +231,23 @@ $(document).ready( function () {
 		$('#team').append('<li id="id_' + key + '">'+ value.name + '</li>');
 		$('#id_' + key).draggable({ cursor: 'pointer', revert: true, stop: function(event, ui) {
 			var element = R.getElementByPoint(mouseX, mouseY);
-			if(element != null) addTeamNode(key, element.node.id);
+			//alert(element.node.id);
+			//alert(element.node["id"]);
+			if(element != null) addTeamNode(key, element.node["id"]);
 		} });
 	});
 	
-	
-	
-
-			/*var R = Raphael(0, 0, canvas_width, canvas_height);
-				var contact_nodes = new Array();
-				
-				//alert_me();
-				// Drag functions
-				var start = function () {
-                    this.ox = this.attr("cx");
-                    this.oy = this.attr("cy");
-                    //this.animate({r: 70, opacity: .25}, 500, ">");
-                },
-                move = function (dx, dy) {
-                    this.attr({cx: this.ox + dx, cy: this.oy});
-                },
-                up = function () {
-                    //this.animate({r: 50, opacity: .5}, 500, ">");
-                };
-
-				// Draw some nodes
-				for (i=0; i < data.length; i++)
-				{
-					//contact_nodes[i] = R.circle(canvas_width/2, vertical_offset + data[i]['level']*100, data[i]['BI']*10).attr({fill: "hsb(0, 1, 1)", stroke: "none", opacity: .5});
-				}
-				
-				// Draw some edges between nodes
-				$.each(contact_nodes, function() {
-					//alert(this.attr('cx'));
-				  from_x = this.attr('cx');
-				  from_y = this.attr('cy');
-				  $.each(data[this.id].child_ids, function() {
-					//child = r.getById(this); // Very sensitive to error
-					//to_x = child.attr('cx');
-					//to_y = child.attr('cy');
-					alert(this);
-					//alert([from_x, from_y, to_x, to_y].join(","));
-					//alert(to_x);
-					//R.path(["M",from_x, from_y, "L", 500, 600].join(" "));
-				  });
-				});
-                
-				
-                R.set(contact_nodes[0], contact_nodes[1], contact_nodes[2]).drag(move, start, up);  */        
+	// Drag functions
+	/*var start = function () {
+                 this.ox = this.attr("cx");
+                 this.oy = this.attr("cy");
+                 //this.animate({r: 70, opacity: .25}, 500, ">");
+             },
+             move = function (dx, dy) {
+                 this.attr({cx: this.ox + dx, cy: this.oy});
+             },
+             up = function () {
+                 //this.animate({r: 50, opacity: .5}, 500, ">");
+             };*/
+       
 });
