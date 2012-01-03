@@ -1,20 +1,20 @@
 var data =
-	{"contact0":{"active": true, "name": "Barack Obama", "BI": 5, "children":["contact1","contact2"], "team":["team0"]},
-	"contact1":{"active": true, "name": "Hilary Clinton", "BI": 1, "children":["contact3","contact4", "contact5"], "team":["team1", "team2"]},
-	"contact2":{"active": true, "name": "John McCaine", "BI": 3, "children":["contact6"], "team":["team1", "team2"]},
-	"contact3":{"active": true, "name": "Nick Cordrey", "BI": 3, "children":[], "team":["team1", "team3"]},
-	"contact4":{"active": true, "name": "Natalie Brooking", "BI": 3, "children":[], "team":["team1", "team3"]},
-	"contact5":{"active": true, "name": "Paul Brooking", "BI": 3, "children":[], "team":[]},
-	"contact6":{"active": true, "name": "Mary Brooking", "BI": 3, "children":["contact7"], "team":["team0"]},
-	"contact7":{"active": true, "name": "Jemima Puddleduck", "BI": 1, "children":[], "team":[]},
-	"contact8":{"active": false, "name": "Gruffalo", "BI": 2, "children":[], "team":[]},
-	"contact9":{"active": false, "name": "Winnie the Pooh", "BI": 2, "children":[], "team":[]}};
+	{"contact0":{"active": true, "name": "Vittorio Colao", "BI": 5, "children":["contact1","contact2"], "team":["team0"]},
+	"contact1":{"active": true, "name": "Michel Combes", "BI": 1, "children":["contact3","contact4", "contact5"], "team":["team1", "team2"]},
+	"contact2":{"active": true, "name": "Nick Read", "BI": 3, "children":["contact6"], "team":["team1", "team2"]},
+	"contact3":{"active": true, "name": "Warren Feingold", "BI": 3, "children":[], "team":["team1", "team3"]},
+	"contact4":{"active": true, "name": "Morten Lundel", "BI": 3, "children":[], "team":["team1", "team3"]},
+	"contact5":{"active": true, "name": "Steve Pusey", "BI": 3, "children":[], "team":[]},
+	"contact6":{"active": true, "name": "Andy Halford", "BI": 3, "children":["contact7"], "team":["team0"]},
+	"contact7":{"active": true, "name": "Ronald Schellekens", "BI": 1, "children":[], "team":[]},
+	"contact8":{"active": false, "name": "Rosemary Martin", "BI": 2, "children":[], "team":[]},
+	"contact9":{"active": false, "name": "Matthew Kirk", "BI": 2, "children":[], "team":[]}};
 	
 var team_data = 
-	{"team0":{"name": "Nick Cordrey"},
-	"team1":{"name": "Nat Brooking"},
-	"team2":{"name": "Mark Priestley"},
-	"team3":{"name": "James Cole"}};
+	{"team0":{"name": "Keith Ferrazzi", "initial": "KF"},
+	"team1":{"name": "John P. Kelly", "initial": "JK"},
+	"team2":{"name": "Tahl Raz", "initial": "TR"},
+	"team3":{"name": "Jim Hannon", "initial": "JH"}};
 	
 var test_node = [];
 	
@@ -23,9 +23,9 @@ var canvas_horizontal_offset = 0;
 var canvas_width = 800;
 var canvas_height = 600;
 var vertical_offset = 150;
-var centre_offset = 0;
+var left_offset = 300;
 var x_spacing = 125;
-var y_spacing = 125;
+var y_spacing = 135;
 var radius_base = 20;
 var radius_weight = 8;
 var team_radius = 15;
@@ -39,6 +39,7 @@ var node_positions = {};
 var node_shapes = {};
 var node_labels = {};
 var team_shapes = {};
+var team_labels = {};
 var path_shapes = {};
 //var edge_paths = [];
 var node_x = 0;
@@ -67,24 +68,24 @@ function get_node_positions(node, level) {
 
 // ** This doesn't really work when you start adding nodes
 function centre_node_positions() {
-	var svg_width = $('#svg').width();
+	/*var svg_width = $('#svg').width();
 	if(centre_offset == 0 && node_positions["contact0"].x < svg_width/2) {
 		centre_offset = svg_width/2 - node_positions["contact0"].x;
 	}
 	
 	if(centre_offset != 0) {
-	//alert(centre_offset);	
+	//alert(centre_offset);	*/
 		$.each(node_positions, function(key, value) {
-			node_positions[key]["x"] = value.x + centre_offset;
+			node_positions[key]["x"] = value.x + left_offset;
 		});
-	}
+	//}
 }
 
 function draw_nodes() {
 	$.each(node_positions, function(key, value) {
-		node_shapes[key] = R.circle(value.x, value.y, radius_base + data[key]["BI"]*radius_weight).attr({fill: "#98FB98", stroke: "#ffffff", "stroke-width": 5});//.mouseover(function () { this.animate({"r" : this.attr("r") + 10}, 100)}).mouseout(function () { this.animate({"r" : this.attr("r") - 10}, 100)});
+		node_shapes[key] = R.circle(value.x, value.y, radius_base + data[key]["BI"]*radius_weight).attr({fill: "#98FB98", stroke: "#ffffff", "stroke-width": 5}).attr({opacity:0.0}).animate({opacity:1.0}, animation_duration).mouseover(function () { this.attr({stroke: "#AAAAAA"})}).mouseout(function () { this.attr({stroke: "#ffffff"})});
 		node_shapes[key].node.id = key;
-		node_labels[key] = R.text(value.x, value.y - (radius_base + data[key]["BI"]*radius_weight + label_y_offset), data[key]["name"]).attr({'font-size': '12px'});
+		node_labels[key] = R.text(value.x, value.y - (radius_base + data[key]["BI"]*radius_weight + label_y_offset), data[key]["name"]).attr({'font-size': '12px'}).attr({opacity:0.0}).animate({opacity:1.0}, animation_duration);
 	});
 }
 
@@ -93,7 +94,7 @@ function draw_team() {
 	$.each(data, function(contact, contact_data) {
 		var team_count = contact_data.team.length;
 		$.each(contact_data.team, function(index, team_contact) {	
-			team_shapes[contact+team_contact] = R.circle(node_positions[contact].x + Math.cos(((index+1)/team_count)*2*Math.PI)*(radius_base + data[contact]["BI"]*radius_weight), node_positions[contact].y + Math.sin(((index+1)/team_count)*2*Math.PI)*(radius_base + data[contact]["BI"]*radius_weight), team_radius).attr({fill: "#FFF68F", stroke: "#ffffff", "stroke-width": 3});
+			team_shapes[contact+team_contact] = R.circle(node_positions[contact].x + Math.cos(((index+1)/team_count)*2*Math.PI)*(radius_base + data[contact]["BI"]*radius_weight), node_positions[contact].y + Math.sin(((index+1)/team_count)*2*Math.PI)*(radius_base + data[contact]["BI"]*radius_weight), team_radius).attr({fill: "#FFF68F", stroke: "#ffffff", "stroke-width": 3}).attr({opacity:0.0}).animate({opacity:1.0}, animation_duration).mouseover(function () { this.attr({stroke: "#AAAAAA"})}).mouseout(function () { this.attr({stroke: "#ffffff"})});
 			
 		});
 	});
@@ -104,7 +105,7 @@ function draw_edges() {
 		if(node_values.children.length !== 0) {
 			$.each(node_values.children, function(key, child_id) {
 				//edge_paths.push({"start":node_id, "end":child_id});
-				path_shapes[node_id+child_id] = R.path(["M",node_positions[node_id].x, node_positions[node_id].y, "L", node_positions[child_id].x, node_positions[child_id].y].join(" ")).attr({stroke: "#ffffff", "stroke-width": 5}).toBack();
+				path_shapes[node_id+child_id] = R.path(["M",node_positions[node_id].x, node_positions[node_id].y, "L", node_positions[child_id].x, node_positions[child_id].y].join(" ")).attr({stroke: "#ffffff", "stroke-width": 5}).toBack().attr({opacity:0.0}).animate({opacity:1.0}, animation_duration).mouseover(function () { this.attr({stroke: "#AAAAAA"})}).mouseout(function () { this.attr({stroke: "#ffffff"})});
 				//alert('connect from '+ node_id + ' to ' + child_id);
 			});
   		}
@@ -113,6 +114,8 @@ function draw_edges() {
 
 function addNode(node_id, parent_id) {
 
+	if (node_positions[node_id]) return;
+	
 	//data[node_id] = node_data;
 	data[parent_id].children.push(node_id);
 	
@@ -121,16 +124,14 @@ function addNode(node_id, parent_id) {
 	get_node_positions("contact0", 0);
 	centre_node_positions();
 	
-	//alert(JSON.stringify(node_positions));
-	//alert(team_shapes["contact0team0"].attr("x"));
 	
 	$.each(node_positions, function(node, value) {
 
 		if(node_shapes[node] == undefined) {
 	
-			node_shapes[node] = R.circle(value.x, value.y, radius_base + data[node]["BI"]*radius_weight).attr({fill: "#98FB98", stroke: "#ffffff", "stroke-width": 5}).attr({opacity:0.0}).animate({opacity:1.0}, animation_duration);
+			node_shapes[node] = R.circle(value.x, value.y, radius_base + data[node]["BI"]*radius_weight).attr({fill: "#98FB98", stroke: "#ffffff", "stroke-width": 5}).attr({opacity:0.0}).animate({opacity:1.0}, animation_duration).mouseover(function () { this.attr({stroke: "#AAAAAA"})}).mouseout(function () { this.attr({stroke: "#ffffff"})});
 			node_shapes[node].node.id = node;
-			node_labels[node] = R.text(value.x, value.y - (radius_base + data[node]["BI"]*radius_weight + label_y_offset), data[node]["name"]).attr({'font-size': '12px'});
+			node_labels[node] = R.text(value.x, value.y - (radius_base + data[node]["BI"]*radius_weight + label_y_offset), data[node]["name"]).attr({'font-size': '12px'}).attr({opacity:0.0}).animate({opacity:1.0}, animation_duration);
 		}
 		else {
 			if(node_shapes[node].attr('cx') != value.x) {
@@ -161,7 +162,7 @@ function addNode(node_id, parent_id) {
 					path_shapes[node+child_id].animate({path : ["M",node_positions[node].x, node_positions[node].y, "L", node_positions[child_id].x, node_positions[child_id].y].join(" ")}, animation_duration);
 				}
 				else {
-					path_shapes[node+child_id] = R.path(["M",node_positions[node].x, node_positions[node].y, "L", node_positions[child_id].x, node_positions[child_id].y].join(" ")).toBack().attr({stroke: "#ffffff", "stroke-width": 5}).attr({opacity:0.0}).animate({opacity:1.0}, animation_duration);
+					path_shapes[node+child_id] = R.path(["M",node_positions[node].x, node_positions[node].y, "L", node_positions[child_id].x, node_positions[child_id].y].join(" ")).toBack().attr({stroke: "#ffffff", "stroke-width": 5}).attr({opacity:0.0}).animate({opacity:1.0}, animation_duration).mouseover(function () { this.attr({stroke: "#AAAAAA"})}).mouseout(function () { this.attr({stroke: "#ffffff"})});
 				}
 			});
   		}
@@ -170,8 +171,6 @@ function addNode(node_id, parent_id) {
 }
 
 function addTeamNode(team_id, node_id) {
-	
-	//alert(node_id);
 	
 	if($.inArray(team_id, data[node_id].team) == -1 && data[node_id]) {
 		
@@ -186,10 +185,9 @@ function addTeamNode(team_id, node_id) {
 
 			if(team_shapes[node_id+team_id]) {	
 				team_shapes[node_id+team_id].animate({cx : team_x, cy : team_y}, animation_duration);
-				//team_shapes[node_id+team_id].attr({cx : team_x, cy : team_y});
 			}
 			else {	
-				team_shapes[node_id+team_id] = R.circle(team_x, team_y, team_radius).attr({fill: "#FFF68F", stroke: "#ffffff", "stroke-width": 3});
+				team_shapes[node_id+team_id] = R.circle(team_x, team_y, team_radius).attr({fill: "#FFF68F", stroke: "#ffffff", "stroke-width": 3}).mouseover(function () { this.attr({stroke: "#AAAAAA"})}).mouseout(function () { this.attr({stroke: "#ffffff"})});
 			}
 		});
 	}
@@ -200,19 +198,21 @@ $(document).ready( function () {
     R = Raphael("svg", "100%", "100%");
 	get_node_positions("contact0", 0);
 	centre_node_positions();
-	//alert(JSON.stringify(node_positions));
 	draw_nodes();
 	draw_team();
 	draw_edges();
+	
 	$('svg > circle').click(function() {
-		alert(R.getElementByPoint(mouseX, mouseY).node.id);
+		var element = R.getElementByPoint(mouseX, mouseY);
+		$("#right-bar").css('visibility', 'visible');
+		//alert(data[element.node["id"]]["name"]);
+		$("#right-bar span#name").html(data[element.node["id"]]["name"]);
+		$("#right-bar span#BI").html(data[element.node["id"]]["BI"]);
 	});
 	$('body').mousemove(function(e) { 
 	    mouseX = e.pageX;// - this.offsetLeft; 
 	    mouseY = e.pageY;// - this.offsetTop; 
-	    //$("span").html("X: " + mouseX + "   Y: " + mouseY); 
 	});
-	//$('#id_team0').html('<ul><li id = "id_team0">John Kelly</li></ul>');
 	$.each(data, function(key, value) {
 		if(value.active == true) {
 			$('#account').append('<li style="color:#98FB98;" id="id_' + key + '"><span style="color:#000000;">'+ value.name + '</span></li>');
@@ -231,8 +231,6 @@ $(document).ready( function () {
 		$('#team').append('<li id="id_' + key + '">'+ value.name + '</li>');
 		$('#id_' + key).draggable({ cursor: 'pointer', revert: true, stop: function(event, ui) {
 			var element = R.getElementByPoint(mouseX, mouseY);
-			//alert(element.node.id);
-			//alert(element.node["id"]);
 			if(element != null) addTeamNode(key, element.node["id"]);
 		} });
 	});

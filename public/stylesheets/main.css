@@ -30,6 +30,17 @@
 	cursor: pointer;
 }
 
+#right-bar {
+	position: absolute;
+	width: 200px;
+	right: 10px;
+	top: 50px;
+	background-color: #ffffff;
+	padding-left: 10px;
+	border-radius: 5px;
+	visibility: hidden;
+}
+
 p {
 	margin: 5px;
 }
