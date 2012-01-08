@@ -95,7 +95,8 @@ function draw_team() {
 		var team_count = contact_data.team.length;
 		$.each(contact_data.team, function(index, team_contact) {	
 			team_shapes[contact+team_contact] = R.circle(node_positions[contact].x + Math.cos(((index+1)/team_count)*2*Math.PI)*(radius_base + data[contact]["BI"]*radius_weight), node_positions[contact].y + Math.sin(((index+1)/team_count)*2*Math.PI)*(radius_base + data[contact]["BI"]*radius_weight), team_radius).attr({fill: "#FFF68F", stroke: "#ffffff", "stroke-width": 3}).attr({opacity:0.0}).animate({opacity:1.0}, animation_duration).mouseover(function () { this.attr({stroke: "#AAAAAA"})}).mouseout(function () { this.attr({stroke: "#ffffff"})});
-			
+			//team_labels[contact+team_contact] = R.text(team_shapes[contact+team_contact].attr("cx"), team_shapes[contact+team_contact].attr("cy"), team_data[index]["initial"]).attr({'font-size': '12px'}).attr({opacity:0.0}).animate({opacity:1.0}, animation_duration);
+			team_labels[contact+team_contact] = R.text(team_shapes[contact+team_contact].attr("cx"), team_shapes[contact+team_contact].attr("cy"), team_data[team_contact]["initial"]).attr({'font-size': '12px'}).attr({opacity:0.0}).animate({opacity:1.0}, animation_duration);
 		});
 	});
 }
@@ -142,13 +143,14 @@ function addNode(node_id, parent_id) {
 				// Move the label
 				node_labels[node].animate({x : value.x}, animation_duration);
 				
-				// Move any team child nodes
+				// Move any team child nodes and labels
 				var team_count = data[node].team.length;
 				$.each(data[node].team, function(index, team_contact) {
 					if(team_shapes[node+team_contact]) {
 						team_x = node_positions[node].x + Math.cos(((index+1)/team_count)*2*Math.PI)*(radius_base + data[node]["BI"]*radius_weight);
 						team_y = node_positions[node].y + Math.sin(((index+1)/team_count)*2*Math.PI)*(radius_base + data[node]["BI"]*radius_weight);
 						team_shapes[node+team_contact].animate({cx : team_x, cy : team_y}, animation_duration);
+						team_labels[node+team_contact].animate({x : team_x, y : team_y}, animation_duration);
 					}	
 				});
 				
@@ -185,9 +187,11 @@ function addTeamNode(team_id, node_id) {
 
 			if(team_shapes[node_id+team_id]) {	
 				team_shapes[node_id+team_id].animate({cx : team_x, cy : team_y}, animation_duration);
+				team_labels[node_id+team_id].animate({x : team_x, y : team_y}, animation_duration);
 			}
 			else {	
 				team_shapes[node_id+team_id] = R.circle(team_x, team_y, team_radius).attr({fill: "#FFF68F", stroke: "#ffffff", "stroke-width": 3}).mouseover(function () { this.attr({stroke: "#AAAAAA"})}).mouseout(function () { this.attr({stroke: "#ffffff"})});
+				team_labels[node_id+team_id] = R.text(team_shapes[node_id+team_id].attr("cx"), team_shapes[node_id+team_id].attr("cy"), team_data[team_id]["initial"]).attr({'font-size': '12px'}).attr({opacity:0.0}).animate({opacity:1.0}, animation_duration);
 			}
 		});
 	}

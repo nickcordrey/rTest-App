@@ -8,14 +8,14 @@
 
 #title {
 	float: left;
-	margin-left: 20px;
+	margin-left: 15px;
 }
 
 #left-bar {
 	position: absolute;
 	width: 200px;
 	left: 10px;
-	top: 50px;
+	top: 90px;
 	background-color: #ffffff;
 	padding-left: 10px;
 	border-radius: 5px;
@@ -34,7 +34,7 @@
 	position: absolute;
 	width: 200px;
 	right: 10px;
-	top: 50px;
+	top: 90px;
 	background-color: #ffffff;
 	padding-left: 10px;
 	border-radius: 5px;
@@ -47,4 +47,22 @@ p {
 
 #utilities {
 	margin-top: 5px;
+}
+
+#account-title {
+	position: absolute;
+	left: 15px;
+	top: 35px;
+}
+
+#footer {
+	position: absolute;
+	bottom: 5px;
+	left: 5px;
+}
+
+#version {
+	position: absolute;
+	bottom: 5px;
+	right: 5px;
 }
